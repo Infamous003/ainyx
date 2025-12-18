@@ -6,6 +6,7 @@ import (
 	"github.com/Infamous003/ainyx/internal/models"
 	"github.com/Infamous003/ainyx/internal/repository"
 	"github.com/Infamous003/ainyx/internal/service"
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 )
@@ -29,6 +30,17 @@ func (h *User) CreateUser(c *fiber.Ctx) error {
 		h.logger.Error("failed to parse payload", zap.Error(err))
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
+		})
+	}
+
+	var validate = validator.New()
+	if err := validate.Struct(payload); err != nil {
+		errors := make(map[string]string)
+		for _, err := range err.(validator.ValidationErrors) {
+			errors[err.Field()] = "is required"
+		}
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"errors": errors,
 		})
 	}
 
