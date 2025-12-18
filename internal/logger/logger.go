@@ -5,7 +5,10 @@ import (
 )
 
 func New() *zap.Logger {
-	logger, err := zap.NewDevelopment()
+	cfg := zap.NewDevelopmentConfig()
+	cfg.DisableStacktrace = true
+
+	logger, err := cfg.Build()
 	if err != nil {
 		panic("failed to create zap logger: " + err.Error())
 	}
