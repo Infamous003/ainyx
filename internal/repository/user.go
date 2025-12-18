@@ -28,21 +28,25 @@ func (r *User) Create(ctx context.Context, name string, dob time.Time) (sqlc.Use
 	})
 }
 
-func (r *User) GetByID(ctx context.Context, id int32) (sqlc.User, error) {
+func (r *User) GetByID(ctx context.Context, id int32) (*sqlc.User, error) {
 	user, err := r.q.GetUserByID(ctx, id)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
-			return sqlc.User{}, ErrUserNotFound
+			return &sqlc.User{}, ErrUserNotFound
 		default:
-			return sqlc.User{}, err
+			return &sqlc.User{}, err
 		}
 	}
 
-	return user, nil
+	return &user, nil
 }
 
-func (r *User) Update(ctx context.Context, id int32, name string, dob time.Time) (sqlc.User, error) {
+func (r *User) ListUsers(ctx context.Context) ([]sqlc.User, error) {
+	return r.q.ListUsers(ctx)
+}
+
+func (r *User) Update(ctx context.Context, id int32, name string, dob time.Time) (*sqlc.User, error) {
 	user, err := r.q.UpdateUser(ctx, sqlc.UpdateUserParams{
 		ID:   id,
 		Name: name,
@@ -51,13 +55,13 @@ func (r *User) Update(ctx context.Context, id int32, name string, dob time.Time)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
-			return sqlc.User{}, ErrUserNotFound
+			return &sqlc.User{}, ErrUserNotFound
 		default:
-			return sqlc.User{}, err
+			return &sqlc.User{}, err
 		}
 	}
 
-	return user, nil
+	return &user, nil
 }
 
 func (r *User) Delete(ctx context.Context, id int32) error {
