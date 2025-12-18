@@ -12,7 +12,7 @@ type User struct {
 	repo *repository.User
 }
 
-func New(repo *repository.User) *User {
+func NewUser(repo *repository.User) *User {
 	return &User{repo: repo}
 }
 
@@ -25,7 +25,7 @@ func (s *User) GetUser(ctx context.Context, id int32) (*models.UserRead, error) 
 	return &models.UserRead{
 		ID:   int(id),
 		Name: user.Name,
-		Dob:  user.Dob,
+		Dob:  models.Date(user.Dob),
 		Age:  CalculateAge(user.Dob),
 	}, nil
 }
@@ -41,7 +41,7 @@ func (s *User) ListUsers(ctx context.Context) ([]*models.UserRead, error) {
 		res = append(res, &models.UserRead{
 			ID:   int(user.ID),
 			Name: user.Name,
-			Dob:  user.Dob,
+			Dob:  models.Date(user.Dob),
 			Age:  CalculateAge(user.Dob),
 		})
 	}
@@ -58,7 +58,7 @@ func (s *User) CreateUser(ctx context.Context, name string, dob time.Time) (*mod
 	return &models.UserBasic{
 		ID:   int(user.ID),
 		Name: user.Name,
-		Dob:  user.Dob,
+		Dob:  models.Date(user.Dob),
 	}, nil
 }
 
@@ -71,7 +71,7 @@ func (s *User) UpdateUser(ctx context.Context, id int32, name string, dob time.T
 	return &models.UserBasic{
 		ID:   int(user.ID),
 		Name: user.Name,
-		Dob:  user.Dob,
+		Dob:  models.Date(user.Dob),
 	}, nil
 }
 
